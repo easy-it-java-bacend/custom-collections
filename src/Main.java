@@ -1,20 +1,24 @@
 import java.util.ArrayList;
+import java.util.Date;
 
 public class Main {
 
     public static void main(String[] args) {
-//        ArrayList<Integer> arrayList = new ArrayList<>();
-//        arrayList.add(3, 0);
+        MyArrayList<String> list = new MyArrayList<>();
+        list.add("Bishkek");
+        list.add("Talas");
+        list.add("Osh");
+        list.add("Naryn");
+        list.add("Cholpon-Ata");
+        list.add("Jalal-Abad");
 
-        ArrayListForInt arrayListForInt = new ArrayListForInt();
-        arrayListForInt.add(12);
-        arrayListForInt.add(121);
-        arrayListForInt.add(2);
-        arrayListForInt.add(0,1);
-        arrayListForInt.add(5);
+        MyArrayList<String> listTwo = new MyArrayList<>();
+        listTwo.add("Naryn");
+        listTwo.add("Cholpon-Ata");
+        listTwo.add("Bishkek");
 
-        for (int i = 0; i < arrayListForInt.size(); i++) {
-            System.out.println(arrayListForInt.get(i));
-        }
+        System.out.println(list.retainAll(listTwo));
+        System.out.println(list);
+
     }
 }
