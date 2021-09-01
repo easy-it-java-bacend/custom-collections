@@ -17,8 +17,7 @@ public class Main {
         listTwo.add("Cholpon-Ata");
         listTwo.add("Bishkek");
 
-        System.out.println(list.retainAll(listTwo));
+        System.out.println(list.remove("Bishkek"));
         System.out.println(list);
-
     }
 }
