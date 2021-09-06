@@ -1,7 +1,7 @@
 import java.util.Iterator;
 
 public class MyLinkedList<E> extends AbstractList<E>
-        implements List<E>, Collection<E> {
+        implements List<E>, Deque<E>, Collection<E> {
 
     private Node<E> head;
     private Node<E> tail;
@@ -18,18 +18,18 @@ public class MyLinkedList<E> extends AbstractList<E>
     }
 
     @Override
-    public boolean contains(Object o) {
-        return false;
-    }
-
-    @Override
     public boolean remove(Object o) {
-        return false;
+        int index = indexOf((E) o);
+        if (index == -1) {
+            return false;
+        }
+        remove(index);
+        return true;
     }
 
     @Override
     public int size() {
-        return 0;
+        return size;
     }
 
     @Override
@@ -39,14 +39,24 @@ public class MyLinkedList<E> extends AbstractList<E>
 
     @Override
     public void add(int index, E element) {
-        Node<E> current = head;
-        for (int i = 0; i < index; i++) {
-            current = current.next;
+        if (index == 0) {
+            Node<E> temp = head;
+            head = new Node<>(element);
+            head.next = temp;
+        } else if (index == size() - 1) {
+            Node<E> temp = tail;
+            tail = new Node<>(element);
+            temp.next = tail;
+        } else {
+            Node<E> current = head;
+            for (int i = 0; i < index; i++) {
+                current = current.next;
+            }
+            Node<E> temp = current.next;
+            current.next = new Node<>(element);
+            (current.next).next = temp;
+            size++;
         }
-        Node<E> temp = current.next;
-        current.next = new Node<>(element);
-        (current.next).next = temp;
-        size++;
     }
 
     @Override
@@ -61,12 +71,35 @@ public class MyLinkedList<E> extends AbstractList<E>
 
     @Override
     public E remove(int index) {
-        return null;
+        checkRange(index);
+        if (index == 0) {
+          return removeFirst();
+        }
+        else if (index == size() - 1) {
+            return removeLast();
+        } else {
+            Node<E> prevNode = head;
+            for (int i = 0; i < index - 1; i++) {
+                prevNode = prevNode.next;
+            }
+            Node<E> currentNode = prevNode.next;
+            prevNode.next = currentNode.next;
+            return currentNode.element;
+        }
     }
 
     @Override
     public int indexOf(E element) {
-        return 0;
+        Iterator<E> iterator = iterator();
+        int indexCounter = 0;
+        while (iterator.hasNext()) {
+            E e = iterator.next();
+            if (e.equals(element)) {
+                return indexCounter;
+            }
+            indexCounter++;
+        }
+        return -1;
     }
 
     @Override
@@ -76,15 +109,91 @@ public class MyLinkedList<E> extends AbstractList<E>
 
     @Override
     public Iterator<E> iterator() {
+        return new IteratorImpl();
+    }
+
+    @Override
+    public E getFirst() {
+        //homework
+        return null;
+    }
+
+    @Override
+    public E getLast() {
+        //homework
+        return null;
+    }
+
+    @Override
+    public E removeFirst() {
+        Node<E> currentNode = head;
+        head = head.next;
+        return currentNode.element;
+    }
+
+    @Override
+    public E removeLast() {
+        Node<E> prevNode = head;
+        for (int i = 0; i < size() - 2; i++) {
+            prevNode = prevNode.next;
+        }
+        Node<E> currentNode = tail;
+        tail = prevNode;
+        tail.next = null;
+        size--;
+        return currentNode.element;
+    }
+
+    @Override
+    public E remove() {
+        return null;
+    }
+
+    @Override
+    public E poll() {
+        return null;
+    }
+
+    @Override
+    public boolean offer(E e) {
+        return false;
+    }
+
+    @Override
+    public E peek() {
+        return null;
+    }
+
+    @Override
+    public E element() {
         return null;
     }
 
     private static class Node<E> {
         private E element;
         private Node<E> next; // null
+        private Node<E> prev;
 
         public Node(E element) {
             this.element = element;
         }
     }
+
+    private class IteratorImpl implements Iterator<E> {
+
+        private Node<E> currentNode = head;
+
+        @Override
+        public boolean hasNext() {
+            return currentNode != null;
+        }
+
+        @Override
+        public E next() {
+            E temp = currentNode.element;
+            currentNode = currentNode.next;
+            return temp;
+        }
+    }
+
 }

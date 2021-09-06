@@ -11,7 +11,11 @@ public class MyArrayList<E> extends AbstractList<E>
     private static final int DEFAULT_CAPACITY = 10;
 
     public MyArrayList() {
-        data = (E[]) new Object[DEFAULT_CAPACITY];
+        this(DEFAULT_CAPACITY);
+    }
+
+    public MyArrayList(int initialCapacity) {
+        data = (E[]) new Object[initialCapacity];
     }
 
     @Override
@@ -19,17 +23,6 @@ public class MyArrayList<E> extends AbstractList<E>
         data = (E[]) new Object[size()];
         size = 0;
     }
-
-    @Override
-    public boolean contains(Object o) {
-        for (int i = 0; i < data.length; i++) {
-            if (o.equals(data[i])) {
-                return true;
-            }
-        }
-        return false;
-    }
-
 
     public void trimToSize() {
         data = Arrays.copyOf(data, size());
@@ -41,11 +34,13 @@ public class MyArrayList<E> extends AbstractList<E>
         if (index == -1) {
             return false;
         }
-        for (int i = index; i + 1 < size; i++) {
-            data[i] = data[i + 1];
-        }
-        size--;
+        remove(index);
         return true;
+    }
+
+    @Override
+    public int size() {
+        return size;
     }
 
     @Override
@@ -63,18 +58,6 @@ public class MyArrayList<E> extends AbstractList<E>
         }
         data[index] = element;
         size++;
-    }
-
-    private void checkRangeAdd(int index) {
-        if (index > size || index < 0) {
-            throw new ArrayIndexOutOfBoundsException("For index = " + index + ", size = " + size);
-        }
-    }
-
-    private void checkRange(int index) {
-        if (index >= size || index < 0) {
-            throw new ArrayIndexOutOfBoundsException("For index = " + index + ", size = " + size);
-        }
     }
 
     private void ensureCapacity() {
