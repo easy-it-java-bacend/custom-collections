@@ -2,8 +2,9 @@ import java.util.Arrays;
 import java.util.Iterator;
 import java.util.ListIterator;
 
-public class MyArrayList<E> extends AbstractList<E>
-        implements List<E>, Collection<E> {
+public class Vector<E> extends AbstractList<E> implements
+                            List<E>, Collection<E> {
+
 
     private int size;
 
@@ -11,11 +12,11 @@ public class MyArrayList<E> extends AbstractList<E>
 
     private static final int DEFAULT_CAPACITY = 10;
 
-    public MyArrayList() {
+    public Vector() {
         this(DEFAULT_CAPACITY);
     }
 
-    public MyArrayList(int initialCapacity) {
+    public Vector(int initialCapacity) {
         data = (E[]) new Object[initialCapacity];
     }
 
@@ -30,7 +31,7 @@ public class MyArrayList<E> extends AbstractList<E>
     }
 
     @Override
-    public boolean remove(Object o) {
+    public synchronized boolean remove(Object o) {
         int index = this.indexOf((E) o);
         if (index == -1) {
             return false;
@@ -40,7 +41,7 @@ public class MyArrayList<E> extends AbstractList<E>
     }
 
     @Override
-    public int size() {
+    public synchronized int size() {
         return size;
     }
 
@@ -133,7 +134,7 @@ public class MyArrayList<E> extends AbstractList<E>
 
     @Override
     public Iterator<E> iterator() {
-        return new IteratorImpl();
+        return new MyArrayList.IteratorImpl();
     }
 
     private class IteratorImpl implements Iterator<E> {

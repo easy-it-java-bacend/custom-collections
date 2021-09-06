@@ -1,4 +1,6 @@
 import java.util.Iterator;
+import java.util.ListIterator;
+import java.util.NoSuchElementException;
 
 public class MyLinkedList<E> extends AbstractList<E>
         implements List<E>, Deque<E>, Collection<E> {
@@ -40,18 +42,14 @@ public class MyLinkedList<E> extends AbstractList<E>
     @Override
     public void add(int index, E element) {
         if (index == 0) {
-            Node<E> temp = head;
-            head = new Node<>(element);
-            head.next = temp;
+            addFirst(element);
         } else if (index == size() - 1) {
-            Node<E> temp = tail;
-            tail = new Node<>(element);
-            temp.next = tail;
+           addLast(element);
         } else {
-            Node<E> current = head;
-            for (int i = 0; i < index; i++) {
-                current = current.next;
-            }
+            Node<E> current = index < size() / 2 ?
+                    iterateFromHead(index) :
+                    iterateFromTail(index);
+
             Node<E> temp = current.next;
             current.next = new Node<>(element);
             (current.next).next = temp;
@@ -59,8 +57,25 @@ public class MyLinkedList<E> extends AbstractList<E>
         }
     }
 
+    private Node<E> iterateFromHead(int index) {
+        Node<E> current = head;
+        for (int i = 0; i < index; i++) {
+            current = current.next;
+        }
+        return current;
+    }
+
+    private Node<E> iterateFromTail(int index) {
+        Node<E> current = tail;
+        for (int i = size() - 1; i > index; i--) {
+            current = current.prev;
+        }
+        return current;
+    }
+
     @Override
     public E get(int index) {
+        // homework
         return null;
     }
 
@@ -78,14 +93,18 @@ public class MyLinkedList<E> extends AbstractList<E>
         else if (index == size() - 1) {
             return removeLast();
         } else {
-            Node<E> prevNode = head;
-            for (int i = 0; i < index - 1; i++) {
-                prevNode = prevNode.next;
-            }
+            Node<E> prevNode = isElementBeforeMiddle(index) ?
+                    iterateFromHead(index) :
+                    iterateFromTail(index);
+
             Node<E> currentNode = prevNode.next;
             prevNode.next = currentNode.next;
             return currentNode.element;
         }
+    }
+
+    private boolean isElementBeforeMiddle(int index) {
+        return index < size() / 2;
     }
 
     @Override
@@ -104,7 +123,21 @@ public class MyLinkedList<E> extends AbstractList<E>
 
     @Override
     public int lastIndexOf(E element) {
-        return 0;
+        ListIterator<E> listIterator = listIterator();
+        int indexCounter = size() - 1;
+        while (listIterator.hasPrevious()) {
+            E e = listIterator.previous();
+            if (e.equals(element)) {
+                return indexCounter;
+            }
+            indexCounter--;
+        }
+        return -1;
+    }
+
+    @Override
+    public ListIterator<E> listIterator() {
+        return new ListIteratorImpl();
     }
 
     @Override
@@ -114,44 +147,102 @@ public class MyLinkedList<E> extends AbstractList<E>
 
     @Override
     public E getFirst() {
-        //homework
-        return null;
+        E element = peekFirst();
+        if (element == null) {
+            throw new NoSuchElementException();
+        }
+        return element;
     }
 
     @Override
     public E getLast() {
-        //homework
-        return null;
+        E element = peekLast();
+        if (element == null) {
+            throw new NoSuchElementException();
+        }
+        return element;
     }
 
     @Override
     public E removeFirst() {
+        E element = pollFirst();
+        if (element == null) {
+            throw new NoSuchElementException();
+        }
+        return element;
+    }
+
+    @Override
+    public E removeLast() {
+        E element = pollLast();
+        if (element == null) {
+            throw new NoSuchElementException();
+        }
+        return element;
+    }
+
+    @Override
+    public void addLast(E element) {
+        offerLast(element);
+    }
+
+    @Override
+    public void addFirst(E element) {
+        offerFirst(element);
+    }
+
+    @Override
+    public E peekLast() {
+        return tail.element;
+    }
+
+    @Override
+    public E peekFirst() {
+        return head.element;
+    }
+
+    @Override
+    public E pollLast() {
+        Node<E> currentNode = tail;
+        tail = tail.prev;
+        return currentNode.element;
+    }
+
+    @Override
+    public E pollFirst() {
         Node<E> currentNode = head;
         head = head.next;
         return currentNode.element;
     }
 
     @Override
-    public E removeLast() {
-        Node<E> prevNode = head;
-        for (int i = 0; i < size() - 2; i++) {
-            prevNode = prevNode.next;
-        }
-        Node<E> currentNode = tail;
-        tail = prevNode;
-        tail.next = null;
-        size--;
-        return currentNode.element;
+    public boolean offerLast(E element) {
+        Node<E> temp = tail;
+        tail = new Node<>(element);
+        temp.next = tail;
+        return true; // !
+    }
+
+    @Override
+    public boolean offerFirst(E element) {
+        Node<E> temp = head;
+        head = new Node<>(element);
+        head.next = temp;
+        return true; // !
     }
 
     @Override
     public E remove() {
-        return null;
+        E element = poll();
+        if (element == null) {
+            throw new NoSuchElementException();
+        }
+        return element;
     }
 
     @Override
     public E poll() {
-        return null;
+        return removeLast();
     }
 
     @Override
@@ -179,6 +270,60 @@ public class MyLinkedList<E> extends AbstractList<E>
         }
     }
 
+    private class ListIteratorImpl implements ListIterator<E> {
+
+        private Node<E> current = tail;
+
+        @Override
+        public boolean hasNext() {
+            return current != null;
+        }
+
+        @Override
+        public E next() {
+            E element = current.element;
+            current = current.next;
+            return element;
+        }
+
+        @Override
+        public boolean hasPrevious() {
+            return current != null;
+        }
+
+        @Override
+        public E previous() {
+            E element = current.element;
+            current = current.prev;
+            return element;
+        }
+
+        @Override
+        public int nextIndex() {
+            throw new UnsupportedOperationException();
+        }
+
+        @Override
+        public int previousIndex() {
+            throw new UnsupportedOperationException();
+        }
+
+        @Override
+        public void remove() {
+            throw new UnsupportedOperationException();
+        }
+
+        @Override
+        public void set(E e) {
+            throw new UnsupportedOperationException();
+        }
+
+        @Override
+        public void add(E e) {
+            throw new UnsupportedOperationException();
+        }
+    }
+
     private class IteratorImpl implements Iterator<E> {
 
         private Node<E> currentNode = head;
@@ -195,5 +340,4 @@ public class MyLinkedList<E> extends AbstractList<E>
             return temp;
         }
     }
-
 }
