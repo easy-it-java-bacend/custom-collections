@@ -1,3 +1,5 @@
+package util;
+
 import java.util.Iterator;
 import java.util.ListIterator;
 import java.util.NoSuchElementException;
@@ -11,6 +13,12 @@ public class MyLinkedList<E> extends AbstractList<E>
     private int size;
 
     public MyLinkedList() {
+    }
+
+    public MyLinkedList(Collection<? extends E> collection) {
+        for (E element : collection) {
+            add(element);
+        }
     }
 
     @Override
@@ -43,7 +51,7 @@ public class MyLinkedList<E> extends AbstractList<E>
     public void add(int index, E element) {
         if (index == 0) {
             addFirst(element);
-        } else if (index == size() - 1) {
+        } else if (index == size()) { // index = 1 size = 1
            addLast(element);
         } else {
             Node<E> current = index < size() / 2 ?
@@ -75,8 +83,9 @@ public class MyLinkedList<E> extends AbstractList<E>
 
     @Override
     public E get(int index) {
-        // homework
-        return null;
+        checkRange(index);
+        Node<E> currentNode = isElementBeforeMiddle(index) ? iterateFromHead(index + 1) : iterateFromTail(index - 1);
+        return currentNode.element;
     }
 
     @Override
@@ -205,6 +214,7 @@ public class MyLinkedList<E> extends AbstractList<E>
     public E pollLast() {
         Node<E> currentNode = tail;
         tail = tail.prev;
+        size++;
         return currentNode.element;
     }
 
@@ -212,6 +222,7 @@ public class MyLinkedList<E> extends AbstractList<E>
     public E pollFirst() {
         Node<E> currentNode = head;
         head = head.next;
+        size++;
         return currentNode.element;
     }
 
@@ -220,6 +231,10 @@ public class MyLinkedList<E> extends AbstractList<E>
         Node<E> temp = tail;
         tail = new Node<>(element);
         temp.next = tail;
+        if (size() == 0) {
+            head = tail;
+        }
+        size++;
         return true; // !
     }
 
@@ -228,6 +243,10 @@ public class MyLinkedList<E> extends AbstractList<E>
         Node<E> temp = head;
         head = new Node<>(element);
         head.next = temp;
+        if (size() == 0) {
+            tail = head;
+        }
+        size++;
         return true; // !
     }
 
@@ -242,22 +261,26 @@ public class MyLinkedList<E> extends AbstractList<E>
 
     @Override
     public E poll() {
-        return removeLast();
+        return removeFirst();
     }
 
     @Override
     public boolean offer(E e) {
-        return false;
+        return offerLast(e);
     }
 
     @Override
     public E peek() {
-        return null;
+        return peekFirst();
     }
 
     @Override
     public E element() {
-        return null;
+        E e = peek();
+        if (e == null) {
+            throw new NoSuchElementException();
+        }
+        return e;
     }
 
     private static class Node<E> {

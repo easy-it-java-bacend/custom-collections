@@ -1,24 +1,16 @@
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.LinkedList;
+import util.MyLinkedList;
 
 public class Main {
 
     public static void main(String[] args) {
-        MyArrayList<String> list = new MyArrayList<>();
-        list.add("Bishkek");
-        list.add("Talas");
-        list.add("Osh");
-        list.add("Naryn");
-        list.add("Cholpon-Ata");
-        list.add("Jalal-Abad");
+        MyLinkedList<Integer> myLinkedList = new MyLinkedList();
+        myLinkedList.add(1);
+        myLinkedList.add(2);
+        myLinkedList.add(3);
+        myLinkedList.add(4);
 
-        MyArrayList<String> listTwo = new MyArrayList<>();
-        listTwo.add("Naryn");
-        listTwo.add("Cholpon-Ata");
-        listTwo.add("Bishkek");
-
-        System.out.println(list.remove("Bishkek"));
-        System.out.println(list);
+        for (Integer i : myLinkedList) {
+            System.out.println(i);
+        }
     }
 }

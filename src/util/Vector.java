@@ -1,10 +1,11 @@
+package util;
+
 import java.util.Arrays;
 import java.util.Iterator;
 import java.util.ListIterator;
 
 public class Vector<E> extends AbstractList<E> implements
                             List<E>, Collection<E> {
-
 
     private int size;
 
@@ -21,7 +22,7 @@ public class Vector<E> extends AbstractList<E> implements
     }
 
     @Override
-    public void clear() {
+    public synchronized void clear() {
         data = (E[]) new Object[size()];
         size = 0;
     }
@@ -134,7 +135,7 @@ public class Vector<E> extends AbstractList<E> implements
 
     @Override
     public Iterator<E> iterator() {
-        return new MyArrayList.IteratorImpl();
+        return new IteratorImpl();
     }
 
     private class IteratorImpl implements Iterator<E> {
