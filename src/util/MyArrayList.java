@@ -46,10 +46,6 @@ public class MyArrayList<E> extends AbstractList<E>
         return size;
     }
 
-    @Override
-    public Object[] toArray() {
-        return new Object[0];
-    }
 
     @Override
     public void add(int index, E element) {

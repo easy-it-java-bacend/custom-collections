@@ -10,6 +10,15 @@ public abstract class AbstractList<E> implements
         return size() == 0;
     }
 
+    @Override
+    public Object[] toArray() {
+        Object[] t = new Object[size()];
+        for (int i = 0; i < size(); i++) {
+            t[i] = get(i);
+        }
+        return new Object[0];
+    }
+
     protected void checkRangeAdd(int index) {
         if (index > size() || index < 0) {
             throw new ArrayIndexOutOfBoundsException("For index = " + index + ", size = " + size());
